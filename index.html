@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C++ STL Reference</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #111118;
+    --bg3: #1a1a24;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #e2e2ee;
+    --muted: #7878a0;
+    --accent: #7c6aff;
+    --accent2: #3ecfb2;
+    --accent3: #ff6b6b;
+    --accent4: #ffa94d;
+    --accent5: #69db7c;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Syne', sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  header {
+    padding: 48px 40px 32px;
+    border-bottom: 1px solid var(--border);
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.95);
+    backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  }
+  .header-title { display: flex; flex-direction: column; gap: 4px; }
+  .header-title h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+  .header-title h1 span { color: var(--accent); }
+  .header-title p { font-size: 12px; color: var(--muted); font-family: var(--mono); }
+
+  /* SEARCH */
+  .search-wrap { position: relative; flex: 1; max-width: 380px; }
+  .search-wrap input {
+    width: 100%; background: var(--bg3); border: 1px solid var(--border2);
+    border-radius: 10px; padding: 10px 16px 10px 40px;
+    color: var(--text); font-family: var(--mono); font-size: 13px;
+    outline: none; transition: border-color .2s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap input::placeholder { color: var(--muted); }
+  .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
+
+  /* FILTER TABS */
+  .filter-bar {
+    padding: 16px 40px;
+    display: flex; gap: 8px; overflow-x: auto; flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+  .filter-bar::-webkit-scrollbar { display: none; }
+  .tab {
+    padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    font-family: var(--mono); cursor: pointer; white-space: nowrap;
+    border: 1px solid var(--border2); background: transparent; color: var(--muted);
+    transition: all .15s;
+  }
+  .tab:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  /* MAIN LAYOUT */
+  main { padding: 32px 40px; max-width: 1400px; }
+
+  /* SECTION */
+  .section { margin-bottom: 48px; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 20px;
+  }
+  .section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .section-title { font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+  .section-tag {
+    font-family: var(--mono); font-size: 11px; padding: 3px 10px;
+    border-radius: 4px; border: 1px solid; opacity: 0.7;
+  }
+  .section-include {
+    font-family: var(--mono); font-size: 12px; color: var(--muted);
+    background: var(--bg3); border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 6px; margin-bottom: 16px;
+    display: inline-block;
+  }
+  .section-include span { color: var(--accent2); }
+
+  /* TABLE */
+  .tbl { width: 100%; border-collapse: collapse; }
+  .tbl thead tr { border-bottom: 1px solid var(--border2); }
+  .tbl th {
+    text-align: left; padding: 8px 14px; font-size: 11px;
+    font-family: var(--mono); color: var(--muted); font-weight: 600;
+    letter-spacing: 0.05em; text-transform: uppercase;
+  }
+  .tbl tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background .1s;
+  }
+  .tbl tbody tr:hover { background: var(--bg3); }
+  .tbl td { padding: 10px 14px; font-size: 13px; vertical-align: top; }
+  .tbl td:first-child { font-family: var(--mono); font-size: 12.5px; white-space: nowrap; }
+  .tbl td:last-child { color: var(--muted); font-size: 12px; line-height: 1.5; }
+
+  code {
+    font-family: var(--mono); font-size: 12px;
+    background: rgba(124,106,255,0.12); color: var(--accent);
+    padding: 1px 6px; border-radius: 4px;
+  }
+  .c-teal { color: var(--accent2); background: rgba(62,207,178,0.1); }
+  .c-red   { color: var(--accent3); background: rgba(255,107,107,0.1); }
+  .c-ora   { color: var(--accent4); background: rgba(255,169,77,0.1); }
+  .c-grn   { color: var(--accent5); background: rgba(105,219,124,0.1); }
+
+  .badge {
+    display: inline-block; font-family: var(--mono); font-size: 10px;
+    padding: 2px 7px; border-radius: 4px; font-weight: 600;
+  }
+  .o1  { background: rgba(105,219,124,0.15); color: var(--accent5); }
+  .ologn { background: rgba(124,106,255,0.15); color: var(--accent); }
+  .on  { background: rgba(255,169,77,0.15); color: var(--accent4); }
+  .o1a { background: rgba(62,207,178,0.15); color: var(--accent2); }
+
+  /* HIDDEN */
+  .section.hidden { display: none; }
+  .tbl tbody tr.hidden { display: none; }
+
+  /* NO RESULTS */
+  .no-results { color: var(--muted); font-family: var(--mono); font-size: 13px; padding: 32px 0; text-align: center; display: none; }
+  .no-results.show { display: block; }
+
+  /* GRID for algo section */
+  .algo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  .algo-card {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .algo-card .fn { font-family: var(--mono); font-size: 12.5px; margin-bottom: 6px; }
+  .algo-card .desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+  @media(max-width:600px) {
+    header, main, .filter-bar { padding-left: 16px; padding-right: 16px; }
+    .tbl th:nth-child(3), .tbl td:nth-child(3) { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-title">
+    <h1>C++ <span>STL</span> Reference</h1>
+    <p>// complete function guide · every data structure</p>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="Search functions... e.g. push_back, find" oninput="filterAll()">
+  </div>
+</header>
+
+<div class="filter-bar" id="filterBar">
+  <button class="tab active" onclick="filterSection('all', this)">All</button>
+  <button class="tab" onclick="filterSection('vector', this)">vector</button>
+  <button class="tab" onclick="filterSection('string', this)">string</button>
+  <button class="tab" onclick="filterSection('map', this)">map / unordered_map</button>
+  <button class="tab" onclick="filterSection('set', this)">set / unordered_set</button>
+  <button class="tab" onclick="filterSection('stack', this)">stack</button>
+  <button class="tab" onclick="filterSection('queue', this)">queue / deque</button>
+  <button class="tab" onclick="filterSection('pq', this)">priority_queue</button>
+  <button class="tab" onclick="filterSection('list', this)">list</button>
+  <button class="tab" onclick="filterSection('pair', this)">pair / tuple</button>
+  <button class="tab" onclick="filterSection('algo', this)">&lt;algorithm&gt;</button>
+  <button class="tab" onclick="filterSection('numeric', this)">&lt;numeric&gt;</button>
+  <button class="tab" onclick="filterSection('bit', this)">bit tricks</button>
+  <button class="tab" onclick="filterSection('math', this)">&lt;cmath&gt;</button>
+  <button class="tab" onclick="filterSection('iter', this)">iterators</button>
+</div>
+
+<main>
+<div id="no-results" class="no-results">No functions found matching your search.</div>
+
+<!-- ═══════════════ VECTOR ═══════════════ -->
+<div class="section" data-id="vector">
+  <div class="section-header">
+    <div class="section-dot" style="background:#7c6aff"></div>
+    <span class="section-title">vector&lt;T&gt;</span>
+    <span class="section-tag" style="color:#7c6aff;border-color:#7c6aff">#include &lt;vector&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>Complexity</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>v.push_back(x)</td><td><span class="badge o1a">O(1) amortized</span></td><td>Append x to end</td></tr>
+      <tr><td>v.pop_back()</td><td><span class="badge o1">O(1)</span></td><td>Remove last element</td></tr>
+      <tr><td>v.size()</td><td><span class="badge o1">O(1)</span></td><td>Number of elements</td></tr>
+      <tr><td>v.empty()</td><td><span class="badge o1">O(1)</span></td><td>True if size == 0</td></tr>
+      <tr><td>v.clear()</td><td><span class="badge on">O(n)</span></td><td>Remove all elements</td></tr>
+      <tr><td>v.resize(n)</td><td><span class="badge on">O(n)</span></td><td>Resize to n elements (fills 0)</td></tr>
+      <tr><td>v.resize(n, val)</td><td><span class="badge on">O(n)</span></td><td>Resize and fill with val</td></tr>
+      <tr><td>v.assign(n, val)</td><td><span class="badge on">O(n)</span></td><td>Assign n copies of val</td></tr>
+      <tr><td>v.front()</td><td><span class="badge o1">O(1)</span></td><td>Reference to first element</td></tr>
+      <tr><td>v.back()</td><td><span class="badge o1">O(1)</span></td><td>Reference to last element</td></tr>
+      <tr><td>v[i]</td><td><span class="badge o1">O(1)</span></td><td>Access element at i (no bounds check)</td></tr>
+      <tr><td>v.at(i)</td><td><span class="badge o1">O(1)</span></td><td>Access element at i (throws if out of range)</td></tr>
+      <tr><td>v.insert(it, x)</td><td><span class="badge on">O(n)</span></td><td>Insert x before iterator it</td></tr>
+      <tr><td>v.insert(it, n, x)</td><td><span class="badge on">O(n)</span></td><td>Insert n copies of x before it</td></tr>
+      <tr><td>v.erase(it)</td><td><span class="badge on">O(n)</span></td><td>Remove element at iterator it</td></tr>
+      <tr><td>v.erase(it1, it2)</td><td><span class="badge on">O(n)</span></td><td>Remove range [it1, it2)</td></tr>
+      <tr><td>v.reserve(n)</td><td><span class="badge on">O(n)</span></td><td>Reserve capacity for n elements</td></tr>
+      <tr><td>v.capacity()</td><td><span class="badge o1">O(1)</span></td><td>Current allocated capacity</td></tr>
+      <tr><td>v.shrink_to_fit()</td><td><span class="badge on">O(n)</span></td><td>Release excess capacity</td></tr>
+      <tr><td>v.swap(v2)</td><td><span class="badge o1">O(1)</span></td><td>Swap contents with v2</td></tr>
+      <tr><td>v.begin() / v.end()</td><td><span class="badge o1">O(1)</span></td><td>Iterator to first / past-last element</td></tr>
+      <tr><td>v.rbegin() / v.rend()</td><td><span class="badge o1">O(1)</span></td><td>Reverse iterators</td></tr>
+      <tr><td>v.data()</td><td><span class="badge o1">O(1)</span></td><td>Raw pointer to underlying array</td></tr>
+      <tr><td>v.emplace_back(args)</td><td><span class="badge o1a">O(1) amortized</span></td><td>Construct element in-place at end (faster than push_back)</td></tr>
+      <tr><td>v.emplace(it, args)</td><td><span class="badge on">O(n)</span></td><td>Construct in-place at iterator</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ STRING ═══════════════ -->
+<div class="section" data-id="string">
+  <div class="section-header">
+    <div class="section-dot" style="background:#3ecfb2"></div>
+    <span class="section-title">string</span>
+    <span class="section-tag" style="color:#3ecfb2;border-color:#3ecfb2">#include &lt;string&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>Complexity</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>s.size() / s.length()</td><td><span class="badge o1">O(1)</span></td><td>Number of characters</td></tr>
+      <tr><td>s.empty()</td><td><span class="badge o1">O(1)</span></td><td>True if empty</td></tr>
+      <tr><td>s.push_back(c)</td><td><span class="badge o1a">O(1) amortized</span></td><td>Append character c</td></tr>
+      <tr><td>s.pop_back()</td><td><span class="badge o1">O(1)</span></td><td>Remove last character</td></tr>
+      <tr><td>s.append(t)</td><td><span class="badge on">O(n)</span></td><td>Append string t</td></tr>
+      <tr><td>s += t</td><td><span class="badge on">O(n)</span></td><td>Concatenate</td></tr>
+      <tr><td>s.substr(pos, len)</td><td><span class="badge on">O(n)</span></td><td>Substring starting at pos, length len</td></tr>
+      <tr><td>s.find(t)</td><td><span class="badge on">O(n·m)</span></td><td>First occurrence of t, returns string::npos if not found</td></tr>
+      <tr><td>s.rfind(t)</td><td><span class="badge on">O(n·m)</span></td><td>Last occurrence of t</td></tr>
+      <tr><td>s.find_first_of(t)</td><td><span class="badge on">O(n)</span></td><td>First char that is any char in t</td></tr>
+      <tr><td>s.find_last_of(t)</td><td><span class="badge on">O(n)</span></td><td>Last char that is any char in t</td></tr>
+      <tr><td>s.find_first_not_of(t)</td><td><span class="badge on">O(n)</span></td><td>First char NOT in t</td></tr>
+      <tr><td>s.replace(pos, len, t)</td><td><span class="badge on">O(n)</span></td><td>Replace len chars at pos with t</td></tr>
+      <tr><td>s.insert(pos, t)</td><td><span class="badge on">O(n)</span></td><td>Insert string t at pos</td></tr>
+      <tr><td>s.erase(pos, len)</td><td><span class="badge on">O(n)</span></td><td>Remove len chars at pos</td></tr>
+      <tr><td>s.clear()</td><td><span class="badge on">O(n)</span></td><td>Remove all characters</td></tr>
+      <tr><td>s.compare(t)</td><td><span class="badge on">O(n)</span></td><td>Lexicographic compare; 0 if equal</td></tr>
+      <tr><td>s.at(i) / s[i]</td><td><span class="badge o1">O(1)</span></td><td>Access character at i</td></tr>
+      <tr><td>s.front() / s.back()</td><td><span class="badge o1">O(1)</span></td><td>First / last character</td></tr>
+      <tr><td>s.c_str()</td><td><span class="badge o1">O(1)</span></td><td>Null-terminated C-string pointer</td></tr>
+      <tr><td>s.reverse() — via algorithm</td><td><span class="badge on">O(n)</span></td><td><code>reverse(s.begin(), s.end())</code></td></tr>
+      <tr><td>stoi(s) / stol / stoll</td><td><span class="badge on">O(n)</span></td><td>String to int / long / long long</td></tr>
+      <tr><td>stof / stod / stold</td><td><span class="badge on">O(n)</span></td><td>String to float / double / long double</td></tr>
+      <tr><td>to_string(n)</td><td><span class="badge on">O(n)</span></td><td>Number to string</td></tr>
+      <tr><td>getline(cin, s)</td><td><span class="badge on">O(n)</span></td><td>Read full line including spaces</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ MAP ═══════════════ -->
+<div class="section" data-id="map">
+  <div class="section-header">
+    <div class="section-dot" style="background:#ffa94d"></div>
+    <span class="section-title">map&lt;K,V&gt; &amp; unordered_map&lt;K,V&gt;</span>
+    <span class="section-tag" style="color:#ffa94d;border-color:#ffa94d">#include &lt;map&gt; / &lt;unordered_map&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>map / unordered_map</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>m[key]</td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>Access or insert key (inserts default if missing!)</td></tr>
+      <tr><td>m.at(key)</td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>Access key; throws if not found</td></tr>
+      <tr><td>m.insert({k,v})</td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>Insert pair; no-op if key exists</td></tr>
+      <tr><td>m.emplace(k, v)</td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>In-place insert; faster than insert</td></tr>
+      <tr><td>m.erase(key)</td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>Remove by key</td></tr>
+      <tr><td>m.erase(it)</td><td><span class="badge o1a">O(1) amortized</span></td><td>Remove by iterator</td></tr>
+      <tr><td>m.find(key)</td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>Returns iterator; m.end() if not found</td></tr>
+      <tr><td>m.count(key)</td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>1 if key exists, 0 otherwise</td></tr>
+      <tr><td>m.contains(key) <em>C++20</em></td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>True if key exists (cleaner than count)</td></tr>
+      <tr><td>m.size()</td><td><span class="badge o1">O(1)</span></td><td>Number of key-value pairs</td></tr>
+      <tr><td>m.empty()</td><td><span class="badge o1">O(1)</span></td><td>True if empty</td></tr>
+      <tr><td>m.clear()</td><td><span class="badge on">O(n)</span></td><td>Remove all elements</td></tr>
+      <tr><td>m.begin() / m.end()</td><td><span class="badge o1">O(1)</span></td><td>Iterators over key-value pairs</td></tr>
+      <tr><td>m.lower_bound(k) <em>map only</em></td><td><span class="badge ologn">O(log n)</span></td><td>Iterator to first key ≥ k</td></tr>
+      <tr><td>m.upper_bound(k) <em>map only</em></td><td><span class="badge ologn">O(log n)</span></td><td>Iterator to first key > k</td></tr>
+      <tr><td>m.equal_range(k) <em>map only</em></td><td><span class="badge ologn">O(log n)</span></td><td>Pair of [lower_bound, upper_bound]</td></tr>
+      <tr><td>m.swap(m2)</td><td><span class="badge o1">O(1)</span></td><td>Swap contents</td></tr>
+      <tr><td>m.merge(m2) <em>C++17</em></td><td><span class="badge on">O(n log n)</span></td><td>Absorb m2 into m (moves nodes)</td></tr>
+    </tbody>
+  </table>
+  <div style="margin-top:10px;font-size:12px;color:var(--muted);font-family:var(--mono)">
+    multimap: same API, allows duplicate keys. unordered_map: O(n) worst case on hash collision; use custom hash for int pairs.
+  </div>
+</div>
+
+<!-- ═══════════════ SET ═══════════════ -->
+<div class="section" data-id="set">
+  <div class="section-header">
+    <div class="section-dot" style="background:#ff6b6b"></div>
+    <span class="section-title">set&lt;T&gt; &amp; unordered_set&lt;T&gt;</span>
+    <span class="section-tag" style="color:#ff6b6b;border-color:#ff6b6b">#include &lt;set&gt; / &lt;unordered_set&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>set / unordered_set</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>s.insert(x)</td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>Insert x; no duplicates stored</td></tr>
+      <tr><td>s.erase(x)</td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>Remove element x</td></tr>
+      <tr><td>s.erase(it)</td><td><span class="badge o1a">O(1) amortized</span></td><td>Remove by iterator</td></tr>
+      <tr><td>s.find(x)</td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>Iterator to x; s.end() if absent</td></tr>
+      <tr><td>s.count(x)</td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>1 if x exists, 0 otherwise</td></tr>
+      <tr><td>s.contains(x) <em>C++20</em></td><td><span class="badge ologn">O(log n)</span> / <span class="badge o1a">O(1) avg</span></td><td>True if x exists</td></tr>
+      <tr><td>s.size()</td><td><span class="badge o1">O(1)</span></td><td>Number of elements</td></tr>
+      <tr><td>s.empty()</td><td><span class="badge o1">O(1)</span></td><td>True if empty</td></tr>
+      <tr><td>s.clear()</td><td><span class="badge on">O(n)</span></td><td>Remove all elements</td></tr>
+      <tr><td>s.lower_bound(x) <em>set only</em></td><td><span class="badge ologn">O(log n)</span></td><td>Iterator to first element ≥ x</td></tr>
+      <tr><td>s.upper_bound(x) <em>set only</em></td><td><span class="badge ologn">O(log n)</span></td><td>Iterator to first element > x</td></tr>
+      <tr><td>*s.begin()</td><td><span class="badge o1">O(1)</span></td><td>Smallest element (set is sorted)</td></tr>
+      <tr><td>*s.rbegin()</td><td><span class="badge o1">O(1)</span></td><td>Largest element</td></tr>
+      <tr><td>s.begin() / s.end()</td><td><span class="badge o1">O(1)</span></td><td>Iterators (sorted order for set)</td></tr>
+      <tr><td>s.swap(s2)</td><td><span class="badge o1">O(1)</span></td><td>Swap contents</td></tr>
+    </tbody>
+  </table>
+  <div style="margin-top:10px;font-size:12px;color:var(--muted);font-family:var(--mono)">
+    multiset: allows duplicates; count(x) returns actual count. set uses red-black tree internally.
+  </div>
+</div>
+
+<!-- ═══════════════ STACK ═══════════════ -->
+<div class="section" data-id="stack">
+  <div class="section-header">
+    <div class="section-dot" style="background:#69db7c"></div>
+    <span class="section-title">stack&lt;T&gt;</span>
+    <span class="section-tag" style="color:#69db7c;border-color:#69db7c">#include &lt;stack&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>Complexity</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>st.push(x)</td><td><span class="badge o1a">O(1) amortized</span></td><td>Push x onto top</td></tr>
+      <tr><td>st.pop()</td><td><span class="badge o1">O(1)</span></td><td>Remove top element (does NOT return it)</td></tr>
+      <tr><td>st.top()</td><td><span class="badge o1">O(1)</span></td><td>Reference to top element</td></tr>
+      <tr><td>st.size()</td><td><span class="badge o1">O(1)</span></td><td>Number of elements</td></tr>
+      <tr><td>st.empty()</td><td><span class="badge o1">O(1)</span></td><td>True if empty</td></tr>
+      <tr><td>st.emplace(args)</td><td><span class="badge o1a">O(1) amortized</span></td><td>Construct element in-place on top</td></tr>
+      <tr><td>st.swap(st2)</td><td><span class="badge o1">O(1)</span></td><td>Swap contents</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ QUEUE / DEQUE ═══════════════ -->
+<div class="section" data-id="queue">
+  <div class="section-header">
+    <div class="section-dot" style="background:#7c6aff"></div>
+    <span class="section-title">queue&lt;T&gt; &amp; deque&lt;T&gt;</span>
+    <span class="section-tag" style="color:#7c6aff;border-color:#7c6aff">#include &lt;queue&gt; / &lt;deque&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>Complexity</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>q.push(x)</td><td><span class="badge o1a">O(1) amortized</span></td><td>Enqueue x at back</td></tr>
+      <tr><td>q.pop()</td><td><span class="badge o1">O(1)</span></td><td>Dequeue front element</td></tr>
+      <tr><td>q.front()</td><td><span class="badge o1">O(1)</span></td><td>Reference to front element</td></tr>
+      <tr><td>q.back()</td><td><span class="badge o1">O(1)</span></td><td>Reference to back element</td></tr>
+      <tr><td>q.size()</td><td><span class="badge o1">O(1)</span></td><td>Number of elements</td></tr>
+      <tr><td>q.empty()</td><td><span class="badge o1">O(1)</span></td><td>True if empty</td></tr>
+      <tr><td>— deque only —</td><td></td><td></td></tr>
+      <tr><td>dq.push_front(x)</td><td><span class="badge o1a">O(1) amortized</span></td><td>Insert at front</td></tr>
+      <tr><td>dq.push_back(x)</td><td><span class="badge o1a">O(1) amortized</span></td><td>Insert at back</td></tr>
+      <tr><td>dq.pop_front()</td><td><span class="badge o1">O(1)</span></td><td>Remove from front</td></tr>
+      <tr><td>dq.pop_back()</td><td><span class="badge o1">O(1)</span></td><td>Remove from back</td></tr>
+      <tr><td>dq[i] / dq.at(i)</td><td><span class="badge o1">O(1)</span></td><td>Random access</td></tr>
+      <tr><td>dq.insert(it, x)</td><td><span class="badge on">O(n)</span></td><td>Insert at iterator</td></tr>
+      <tr><td>dq.erase(it)</td><td><span class="badge on">O(n)</span></td><td>Erase at iterator</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ PRIORITY QUEUE ═══════════════ -->
+<div class="section" data-id="pq">
+  <div class="section-header">
+    <div class="section-dot" style="background:#ffa94d"></div>
+    <span class="section-title">priority_queue&lt;T&gt;</span>
+    <span class="section-tag" style="color:#ffa94d;border-color:#ffa94d">#include &lt;queue&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>Complexity</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>pq.push(x)</td><td><span class="badge ologn">O(log n)</span></td><td>Insert x</td></tr>
+      <tr><td>pq.pop()</td><td><span class="badge ologn">O(log n)</span></td><td>Remove top element</td></tr>
+      <tr><td>pq.top()</td><td><span class="badge o1">O(1)</span></td><td>Largest element (max-heap by default)</td></tr>
+      <tr><td>pq.size()</td><td><span class="badge o1">O(1)</span></td><td>Number of elements</td></tr>
+      <tr><td>pq.empty()</td><td><span class="badge o1">O(1)</span></td><td>True if empty</td></tr>
+      <tr><td>pq.emplace(args)</td><td><span class="badge ologn">O(log n)</span></td><td>Construct in-place</td></tr>
+    </tbody>
+  </table>
+  <div style="margin-top:10px;font-size:12px;color:var(--muted);font-family:var(--mono)">
+    Min-heap: <code>priority_queue&lt;int, vector&lt;int&gt;, greater&lt;int&gt;&gt; pq;</code><br>
+    Custom comparator: <code>priority_queue&lt;pair&lt;int,int&gt;, vector&lt;pair&lt;int,int&gt;&gt;, greater&lt;&gt;&gt; pq;</code>
+  </div>
+</div>
+
+<!-- ═══════════════ LIST ═══════════════ -->
+<div class="section" data-id="list">
+  <div class="section-header">
+    <div class="section-dot" style="background:#3ecfb2"></div>
+    <span class="section-title">list&lt;T&gt; (doubly linked)</span>
+    <span class="section-tag" style="color:#3ecfb2;border-color:#3ecfb2">#include &lt;list&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>Complexity</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>l.push_front(x)</td><td><span class="badge o1">O(1)</span></td><td>Insert at front</td></tr>
+      <tr><td>l.push_back(x)</td><td><span class="badge o1">O(1)</span></td><td>Insert at back</td></tr>
+      <tr><td>l.pop_front()</td><td><span class="badge o1">O(1)</span></td><td>Remove from front</td></tr>
+      <tr><td>l.pop_back()</td><td><span class="badge o1">O(1)</span></td><td>Remove from back</td></tr>
+      <tr><td>l.insert(it, x)</td><td><span class="badge o1">O(1)</span></td><td>Insert before iterator (O(1) given iterator!)</td></tr>
+      <tr><td>l.erase(it)</td><td><span class="badge o1">O(1)</span></td><td>Erase at iterator</td></tr>
+      <tr><td>l.front() / l.back()</td><td><span class="badge o1">O(1)</span></td><td>First / last element</td></tr>
+      <tr><td>l.size() / l.empty()</td><td><span class="badge o1">O(1)</span></td><td>Size / empty check</td></tr>
+      <tr><td>l.sort()</td><td><span class="badge on">O(n log n)</span></td><td>Sort in-place (cannot use std::sort)</td></tr>
+      <tr><td>l.reverse()</td><td><span class="badge on">O(n)</span></td><td>Reverse in-place</td></tr>
+      <tr><td>l.remove(x)</td><td><span class="badge on">O(n)</span></td><td>Remove all elements equal to x</td></tr>
+      <tr><td>l.remove_if(pred)</td><td><span class="badge on">O(n)</span></td><td>Remove all elements where pred is true</td></tr>
+      <tr><td>l.unique()</td><td><span class="badge on">O(n)</span></td><td>Remove consecutive duplicates</td></tr>
+      <tr><td>l.splice(it, l2)</td><td><span class="badge o1">O(1)</span></td><td>Move all of l2 into l before it</td></tr>
+      <tr><td>l.merge(l2)</td><td><span class="badge on">O(n)</span></td><td>Merge two sorted lists</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ PAIR / TUPLE ═══════════════ -->
+<div class="section" data-id="pair">
+  <div class="section-header">
+    <div class="section-dot" style="background:#ff6b6b"></div>
+    <span class="section-title">pair&lt;A,B&gt; &amp; tuple&lt;...&gt;</span>
+    <span class="section-tag" style="color:#ff6b6b;border-color:#ff6b6b">#include &lt;utility&gt; / &lt;tuple&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>Complexity</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>make_pair(a, b)</td><td><span class="badge o1">O(1)</span></td><td>Create a pair</td></tr>
+      <tr><td>p.first / p.second</td><td><span class="badge o1">O(1)</span></td><td>Access first / second element</td></tr>
+      <tr><td>p1 &lt; p2</td><td><span class="badge o1">O(1)</span></td><td>Lexicographic compare (first, then second)</td></tr>
+      <tr><td>make_tuple(a, b, c)</td><td><span class="badge o1">O(1)</span></td><td>Create a tuple</td></tr>
+      <tr><td>get&lt;i&gt;(t)</td><td><span class="badge o1">O(1)</span></td><td>Access i-th element of tuple (compile-time index)</td></tr>
+      <tr><td>tie(a, b, c) = t</td><td><span class="badge o1">O(1)</span></td><td>Unpack tuple into variables</td></tr>
+      <tr><td>auto [a,b,c] = t <em>C++17</em></td><td><span class="badge o1">O(1)</span></td><td>Structured binding (cleanest unpack)</td></tr>
+      <tr><td>tuple_size&lt;T&gt;::value</td><td><span class="badge o1">O(1)</span></td><td>Compile-time size of tuple</td></tr>
+      <tr><td>swap(p1, p2)</td><td><span class="badge o1">O(1)</span></td><td>Swap two pairs</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ ALGORITHM ═══════════════ -->
+<div class="section" data-id="algo">
+  <div class="section-header">
+    <div class="section-dot" style="background:#7c6aff"></div>
+    <span class="section-title">&lt;algorithm&gt;</span>
+    <span class="section-tag" style="color:#7c6aff;border-color:#7c6aff">#include &lt;algorithm&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>Complexity</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>sort(b, e)</td><td><span class="badge on">O(n log n)</span></td><td>Sort range [b, e) ascending</td></tr>
+      <tr><td>sort(b, e, cmp)</td><td><span class="badge on">O(n log n)</span></td><td>Sort with custom comparator</td></tr>
+      <tr><td>stable_sort(b, e)</td><td><span class="badge on">O(n log n)</span></td><td>Sort preserving relative order of equals</td></tr>
+      <tr><td>partial_sort(b, m, e)</td><td><span class="badge on">O(n log k)</span></td><td>Sort only first k elements into [b, m)</td></tr>
+      <tr><td>nth_element(b, nth, e)</td><td><span class="badge on">O(n) avg</span></td><td>Rearrange so nth element is what it'd be if sorted</td></tr>
+      <tr><td>reverse(b, e)</td><td><span class="badge on">O(n)</span></td><td>Reverse range in-place</td></tr>
+      <tr><td>rotate(b, mid, e)</td><td><span class="badge on">O(n)</span></td><td>Left-rotate so mid becomes first</td></tr>
+      <tr><td>binary_search(b, e, x)</td><td><span class="badge ologn">O(log n)</span></td><td>True if x exists in sorted range</td></tr>
+      <tr><td>lower_bound(b, e, x)</td><td><span class="badge ologn">O(log n)</span></td><td>Iterator to first element ≥ x (sorted range)</td></tr>
+      <tr><td>upper_bound(b, e, x)</td><td><span class="badge ologn">O(log n)</span></td><td>Iterator to first element > x (sorted range)</td></tr>
+      <tr><td>equal_range(b, e, x)</td><td><span class="badge ologn">O(log n)</span></td><td>Pair of [lower_bound, upper_bound]</td></tr>
+      <tr><td>min(a, b) / max(a, b)</td><td><span class="badge o1">O(1)</span></td><td>Min / max of two values</td></tr>
+      <tr><td>min({a,b,c}) / max({...})</td><td><span class="badge o1">O(n)</span></td><td>Min / max of initializer list</td></tr>
+      <tr><td>min_element(b, e)</td><td><span class="badge on">O(n)</span></td><td>Iterator to minimum element</td></tr>
+      <tr><td>max_element(b, e)</td><td><span class="badge on">O(n)</span></td><td>Iterator to maximum element</td></tr>
+      <tr><td>minmax_element(b, e)</td><td><span class="badge on">O(n)</span></td><td>Pair of [min_it, max_it] in one pass</td></tr>
+      <tr><td>clamp(v, lo, hi) <em>C++17</em></td><td><span class="badge o1">O(1)</span></td><td>Return v clamped to [lo, hi]</td></tr>
+      <tr><td>swap(a, b)</td><td><span class="badge o1">O(1)</span></td><td>Swap two values</td></tr>
+      <tr><td>fill(b, e, val)</td><td><span class="badge on">O(n)</span></td><td>Fill range with val</td></tr>
+      <tr><td>fill_n(b, n, val)</td><td><span class="badge on">O(n)</span></td><td>Fill n elements starting at b</td></tr>
+      <tr><td>copy(b, e, out)</td><td><span class="badge on">O(n)</span></td><td>Copy range to output iterator</td></tr>
+      <tr><td>copy_if(b, e, out, pred)</td><td><span class="badge on">O(n)</span></td><td>Copy elements satisfying pred</td></tr>
+      <tr><td>transform(b, e, out, fn)</td><td><span class="badge on">O(n)</span></td><td>Apply fn to each element, store in out</td></tr>
+      <tr><td>for_each(b, e, fn)</td><td><span class="badge on">O(n)</span></td><td>Apply fn to each element</td></tr>
+      <tr><td>count(b, e, val)</td><td><span class="badge on">O(n)</span></td><td>Count occurrences of val</td></tr>
+      <tr><td>count_if(b, e, pred)</td><td><span class="badge on">O(n)</span></td><td>Count elements satisfying pred</td></tr>
+      <tr><td>find(b, e, val)</td><td><span class="badge on">O(n)</span></td><td>Iterator to first occurrence of val</td></tr>
+      <tr><td>find_if(b, e, pred)</td><td><span class="badge on">O(n)</span></td><td>Iterator to first element satisfying pred</td></tr>
+      <tr><td>all_of(b, e, pred)</td><td><span class="badge on">O(n)</span></td><td>True if pred holds for ALL elements</td></tr>
+      <tr><td>any_of(b, e, pred)</td><td><span class="badge on">O(n)</span></td><td>True if pred holds for ANY element</td></tr>
+      <tr><td>none_of(b, e, pred)</td><td><span class="badge on">O(n)</span></td><td>True if pred holds for NO element</td></tr>
+      <tr><td>unique(b, e)</td><td><span class="badge on">O(n)</span></td><td>Remove consecutive duplicates; returns new end</td></tr>
+      <tr><td>remove(b, e, val)</td><td><span class="badge on">O(n)</span></td><td>Move non-val elements forward; returns new end</td></tr>
+      <tr><td>remove_if(b, e, pred)</td><td><span class="badge on">O(n)</span></td><td>Remove elements satisfying pred</td></tr>
+      <tr><td>replace(b, e, old, new)</td><td><span class="badge on">O(n)</span></td><td>Replace all old with new</td></tr>
+      <tr><td>next_permutation(b, e)</td><td><span class="badge on">O(n)</span></td><td>Advance to next lexicographic permutation; false if last</td></tr>
+      <tr><td>prev_permutation(b, e)</td><td><span class="badge on">O(n)</span></td><td>Previous permutation</td></tr>
+      <tr><td>merge(b1,e1,b2,e2,out)</td><td><span class="badge on">O(n+m)</span></td><td>Merge two sorted ranges into out</td></tr>
+      <tr><td>inplace_merge(b, m, e)</td><td><span class="badge on">O(n log n)</span></td><td>Merge two sorted halves in-place</td></tr>
+      <tr><td>includes(b1,e1,b2,e2)</td><td><span class="badge on">O(n)</span></td><td>True if [b2,e2) is a subset of [b1,e1)</td></tr>
+      <tr><td>set_union / set_intersection / set_difference</td><td><span class="badge on">O(n+m)</span></td><td>Set ops on sorted ranges → output iterator</td></tr>
+      <tr><td>is_sorted(b, e)</td><td><span class="badge on">O(n)</span></td><td>True if range is sorted</td></tr>
+      <tr><td>is_permutation(b1,e1,b2)</td><td><span class="badge on">O(n²)</span></td><td>True if ranges are permutations of each other</td></tr>
+      <tr><td>shuffle(b, e, rng)</td><td><span class="badge on">O(n)</span></td><td>Randomly shuffle; use mt19937 as rng</td></tr>
+      <tr><td>accumulate → see numeric</td><td></td><td>Moved to &lt;numeric&gt;</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ NUMERIC ═══════════════ -->
+<div class="section" data-id="numeric">
+  <div class="section-header">
+    <div class="section-dot" style="background:#3ecfb2"></div>
+    <span class="section-title">&lt;numeric&gt;</span>
+    <span class="section-tag" style="color:#3ecfb2;border-color:#3ecfb2">#include &lt;numeric&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>Complexity</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>accumulate(b, e, init)</td><td><span class="badge on">O(n)</span></td><td>Sum of range + init value</td></tr>
+      <tr><td>accumulate(b, e, init, fn)</td><td><span class="badge on">O(n)</span></td><td>Fold/reduce with custom binary op</td></tr>
+      <tr><td>reduce(b, e) <em>C++17</em></td><td><span class="badge on">O(n)</span></td><td>Like accumulate but parallelizable</td></tr>
+      <tr><td>partial_sum(b, e, out)</td><td><span class="badge on">O(n)</span></td><td>Prefix sums into out</td></tr>
+      <tr><td>adjacent_difference(b,e,out)</td><td><span class="badge on">O(n)</span></td><td>Differences of consecutive elements</td></tr>
+      <tr><td>inner_product(b1,e1,b2,init)</td><td><span class="badge on">O(n)</span></td><td>Dot product of two ranges</td></tr>
+      <tr><td>iota(b, e, val)</td><td><span class="badge on">O(n)</span></td><td>Fill with val, val+1, val+2, ... (index fill)</td></tr>
+      <tr><td>gcd(a, b) <em>C++17</em></td><td><span class="badge ologn">O(log n)</span></td><td>Greatest common divisor</td></tr>
+      <tr><td>lcm(a, b) <em>C++17</em></td><td><span class="badge ologn">O(log n)</span></td><td>Least common multiple</td></tr>
+      <tr><td>midpoint(a, b) <em>C++20</em></td><td><span class="badge o1">O(1)</span></td><td>Safe (a+b)/2 without overflow</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ BIT TRICKS ═══════════════ -->
+<div class="section" data-id="bit">
+  <div class="section-header">
+    <div class="section-dot" style="background:#ffa94d"></div>
+    <span class="section-title">Bit manipulation builtins &amp; tricks</span>
+    <span class="section-tag" style="color:#ffa94d;border-color:#ffa94d">#include &lt;bit&gt; (C++20) / GCC builtins</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>Complexity</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>__builtin_popcount(n)</td><td><span class="badge o1">O(1)</span></td><td>Count of set bits (int)</td></tr>
+      <tr><td>__builtin_popcountll(n)</td><td><span class="badge o1">O(1)</span></td><td>Count of set bits (long long)</td></tr>
+      <tr><td>__builtin_clz(n)</td><td><span class="badge o1">O(1)</span></td><td>Count leading zeros. UB if n==0</td></tr>
+      <tr><td>__builtin_clzll(n)</td><td><span class="badge o1">O(1)</span></td><td>Leading zeros (long long). UB if n==0</td></tr>
+      <tr><td>__builtin_ctz(n)</td><td><span class="badge o1">O(1)</span></td><td>Count trailing zeros = index of lowest set bit. UB if n==0</td></tr>
+      <tr><td>__builtin_ctzll(n)</td><td><span class="badge o1">O(1)</span></td><td>Trailing zeros (long long)</td></tr>
+      <tr><td>__builtin_parity(n)</td><td><span class="badge o1">O(1)</span></td><td>Parity: 1 if odd number of set bits</td></tr>
+      <tr><td>std::bit_width(n) <em>C++20</em></td><td><span class="badge o1">O(1)</span></td><td>floor(log2(n)) + 1 = bit length</td></tr>
+      <tr><td>std::popcount(n) <em>C++20</em></td><td><span class="badge o1">O(1)</span></td><td>Count set bits (unsigned only)</td></tr>
+      <tr><td>std::countl_zero(n) <em>C++20</em></td><td><span class="badge o1">O(1)</span></td><td>Leading zeros</td></tr>
+      <tr><td>std::countr_zero(n) <em>C++20</em></td><td><span class="badge o1">O(1)</span></td><td>Trailing zeros</td></tr>
+      <tr><td>std::has_single_bit(n) <em>C++20</em></td><td><span class="badge o1">O(1)</span></td><td>True if n is a power of 2</td></tr>
+      <tr><td>std::bit_floor(n) <em>C++20</em></td><td><span class="badge o1">O(1)</span></td><td>Largest power of 2 ≤ n</td></tr>
+      <tr><td>std::bit_ceil(n) <em>C++20</em></td><td><span class="badge o1">O(1)</span></td><td>Smallest power of 2 ≥ n</td></tr>
+      <tr><td>n &amp; (n-1)</td><td><span class="badge o1">O(1)</span></td><td>Strip lowest set bit (also: n==power of 2 iff result==0)</td></tr>
+      <tr><td>n &amp; (-n)</td><td><span class="badge o1">O(1)</span></td><td>Isolate lowest set bit</td></tr>
+      <tr><td>n | (1 &lt;&lt; i)</td><td><span class="badge o1">O(1)</span></td><td>Set bit i</td></tr>
+      <tr><td>n &amp; ~(1 &lt;&lt; i)</td><td><span class="badge o1">O(1)</span></td><td>Clear bit i</td></tr>
+      <tr><td>n ^ (1 &lt;&lt; i)</td><td><span class="badge o1">O(1)</span></td><td>Toggle bit i</td></tr>
+      <tr><td>(n &gt;&gt; i) &amp; 1</td><td><span class="badge o1">O(1)</span></td><td>Check if bit i is set</td></tr>
+      <tr><td>n &lt;&lt; k / n &gt;&gt; k</td><td><span class="badge o1">O(1)</span></td><td>Multiply / divide by 2^k</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ CMATH ═══════════════ -->
+<div class="section" data-id="math">
+  <div class="section-header">
+    <div class="section-dot" style="background:#69db7c"></div>
+    <span class="section-title">&lt;cmath&gt; &amp; &lt;climits&gt;</span>
+    <span class="section-tag" style="color:#69db7c;border-color:#69db7c">#include &lt;cmath&gt; / &lt;climits&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function / Constant</th><th>Type</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>abs(x)</td><td><span class="badge o1">O(1)</span></td><td>Absolute value (use &lt;cstdlib&gt; for int, &lt;cmath&gt; for double)</td></tr>
+      <tr><td>sqrt(x)</td><td><span class="badge o1">O(1)</span></td><td>Square root (double)</td></tr>
+      <tr><td>cbrt(x)</td><td><span class="badge o1">O(1)</span></td><td>Cube root</td></tr>
+      <tr><td>pow(base, exp)</td><td><span class="badge o1">O(1)</span></td><td>base^exp (floating point — use custom for int)</td></tr>
+      <tr><td>log(x) / log2(x) / log10(x)</td><td><span class="badge o1">O(1)</span></td><td>Natural / base-2 / base-10 log</td></tr>
+      <tr><td>ceil(x) / floor(x)</td><td><span class="badge o1">O(1)</span></td><td>Round up / down to integer</td></tr>
+      <tr><td>round(x)</td><td><span class="badge o1">O(1)</span></td><td>Round to nearest integer</td></tr>
+      <tr><td>fmod(x, y)</td><td><span class="badge o1">O(1)</span></td><td>Floating-point remainder</td></tr>
+      <tr><td>hypot(x, y)</td><td><span class="badge o1">O(1)</span></td><td>sqrt(x²+y²) without overflow</td></tr>
+      <tr><td>sin / cos / tan / atan2</td><td><span class="badge o1">O(1)</span></td><td>Trig functions (radians)</td></tr>
+      <tr><td>INT_MIN / INT_MAX</td><td>constant</td><td>-2147483648 / 2147483647</td></tr>
+      <tr><td>LLONG_MIN / LLONG_MAX</td><td>constant</td><td>Long long min/max</td></tr>
+      <tr><td>INT_MAX / 2</td><td>constant</td><td>Safe "infinity" for DP (avoids overflow on addition)</td></tr>
+      <tr><td>1e18 (1LL&lt;&lt;62)</td><td>constant</td><td>Common large-value sentinels in CP</td></tr>
+      <tr><td>M_PI</td><td>constant</td><td>π ≈ 3.14159... (use acos(-1.0) for portability)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══════════════ ITERATORS ═══════════════ -->
+<div class="section" data-id="iter">
+  <div class="section-header">
+    <div class="section-dot" style="background:#7c6aff"></div>
+    <span class="section-title">Iterator utilities</span>
+    <span class="section-tag" style="color:#7c6aff;border-color:#7c6aff">#include &lt;iterator&gt;</span>
+  </div>
+  <table class="tbl">
+    <thead><tr><th>Function</th><th>Complexity</th><th>Description</th></tr></thead>
+    <tbody>
+      <tr><td>begin(c) / end(c)</td><td><span class="badge o1">O(1)</span></td><td>Free function iterators (work on arrays too)</td></tr>
+      <tr><td>rbegin(c) / rend(c)</td><td><span class="badge o1">O(1)</span></td><td>Reverse iterators</td></tr>
+      <tr><td>next(it, n=1)</td><td><span class="badge on">O(n)</span></td><td>Advance iterator by n (O(1) for random-access)</td></tr>
+      <tr><td>prev(it, n=1)</td><td><span class="badge on">O(n)</span></td><td>Move iterator back by n</td></tr>
+      <tr><td>advance(it, n)</td><td><span class="badge on">O(n)</span></td><td>Advance it in-place</td></tr>
+      <tr><td>distance(it1, it2)</td><td><span class="badge on">O(n)</span></td><td>Number of steps between iterators (O(1) for random-access)</td></tr>
+      <tr><td>back_inserter(c)</td><td><span class="badge o1">O(1)</span></td><td>Output iterator that calls push_back</td></tr>
+      <tr><td>front_inserter(c)</td><td><span class="badge o1">O(1)</span></td><td>Output iterator that calls push_front</td></tr>
+      <tr><td>inserter(c, it)</td><td><span class="badge o1">O(1)</span></td><td>Output iterator that calls insert(it, ...)</td></tr>
+    </tbody>
+  </table>
+</div>
+
+</main>
+
+<script>
+let activeSection = 'all';
+
+function filterSection(id, btn) {
+  activeSection = id;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  filterAll();
+}
+
+function filterAll() {
+  const q = document.getElementById('search').value.toLowerCase().trim();
+  let anyVisible = false;
+
+  document.querySelectorAll('.section').forEach(sec => {
+    const sid = sec.dataset.id;
+    const sectionMatch = activeSection === 'all' || activeSection === sid;
+    if (!sectionMatch) { sec.classList.add('hidden'); return; }
+
+    if (!q) {
+      sec.classList.remove('hidden');
+      sec.querySelectorAll('tbody tr').forEach(r => r.classList.remove('hidden'));
+      anyVisible = true;
+      return;
+    }
+
+    let rowVisible = false;
+    sec.querySelectorAll('tbody tr').forEach(row => {
+      const text = row.textContent.toLowerCase();
+      if (text.includes(q)) { row.classList.remove('hidden'); rowVisible = true; }
+      else row.classList.add('hidden');
+    });
+
+    if (rowVisible) { sec.classList.remove('hidden'); anyVisible = true; }
+    else sec.classList.add('hidden');
+  });
+
+  document.getElementById('no-results').classList.toggle('show', !anyVisible);
+}
+</script>
+</body>
+</html>
